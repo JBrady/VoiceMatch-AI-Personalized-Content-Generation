@@ -1,0 +1,188 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: OpenAI API
+  description: Interact with OpenAI API models
+  contact:
+    name: John Brady
+    url: https://kaleidecode.com
+    email: John@kaleidecode.com
+servers:
+  - url: https://api.openai.com/v1
+    description: Main production server (v1)
+
+tags:
+  - name: Completions 
+    description: Endpoints for generating text completions
+  
+  - name: Engines
+    description: Information about models and engines
+  
+  - name: Chat
+    description: Interact with chatbot
+
+paths:
+
+  /engines/{model}/completions:
+    post:
+      operationId: engines.create_completion
+      summary: Generate text completion
+      description: >
+        Returns a text completion for the provided prompt and parameters using the specified model.
+        This endpoint is useful for generating text based on a variety of models provided by OpenAI.
+        For more detailed instructions and limitations, refer to the official model documentation at [OpenAI Documentation](https://openai.com/api/).
+      parameters:
+        - name: model
+          in: path
+          description: The ID of the model to use.
+          required: true
+          schema:
+            type: string
+            enum:
+              - gpt-4-turbo-1.3b # Updated model
+      requestBody:
+        description: The prompt and parameters for the text completion.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompletionRequest' # Reference to the CompletionRequest schema
+              type: object
+              required:
+                - prompt
+              properties:
+                prompt:
+                  type: string
+                  description: The text prompt to complete.
+      responses:
+        '200':
+          description: Successful operation
+          headers:
+            X-RateLimit-Limit:
+              description: The maximum number of requests you're permitted to make per hour.
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              description: The number of requests remaining in the current rate limit window.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompletionResponse'
+              examples:
+                example1:
+                  summary: Example response
+                  value:
+                    id: "exampleid"
+                    model: "gpt-4-turbo-1.3b"
+                    choices: 
+                      - text: "This is an example completion."
+        '400':
+          description: Bad request - Input validation failed or parameters missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: A human-readable description of the error
+                  errorCode:
+                    type: string
+                    description: A unique error code for troubleshooting
+        '500':
+          description: Server error
+  /chat:
+    post:
+      summary: Interact with chatbot
+      description: Send a message to the chatbot and receive a response.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid input
+# Other paths
+components:
+  schemas:
+    CompletionRequest:
+      type: object
+      required:
+        - prompt
+      properties:
+        prompt:
+          type: string
+          description: The prompt to generate completions for
+        max_tokens:
+          type: integer
+          description: The maximum number of tokens to generate
+          default: 256
+        temperature:
+          type: number
+          description: Sampling temperature for the completions
+          default: 0.8
+        top_p:
+          type: number
+          description: Nucleus sampling top-p value
+        presence_penalty:
+          type: number
+          default: 0.7
+        frequency_penalty:
+          type: number
+          default: 0.5
+
+    CompletionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+        created:
+          type: integer
+        model:
+          type: string
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+              index:
+                type: integer
+              logprobs:
+                type: array
+                items:
+                  type: number
+              finish_reason:
+                type: string
+    ChatRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The message to send to the chatbot.
+    ChatResponse:
+      type: object
+      properties:
+        response:
+          type: string
+          description: The chatbot's response.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+security:
+  - ApiKeyAuth: []
