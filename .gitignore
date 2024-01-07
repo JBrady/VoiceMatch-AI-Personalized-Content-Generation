@@ -1,2 +1,5 @@
 # Ignore the env folder
 env/
+
+#ignore the .env file which contains sensitive data like api keys
+.env
