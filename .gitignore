@@ -1,5 +1,4 @@
-# Ignore the env folder
-env/
+# .gitignore
 
-#ignore the .env file which contains sensitive data like api keys
+env/
 .env
