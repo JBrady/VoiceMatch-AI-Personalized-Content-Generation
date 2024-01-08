@@ -1,6 +1,6 @@
-# VoiceMatch AI
+# Writes Like Me
 
-VoiceMatch AI is an innovative solution designed to revolutionize content creation. This cutting-edge tool allows users to upload samples of their own writing, enabling the AI to learn and adapt to their unique style and voice. Once trained, VoiceMatch AI generates new content that mirrors the user's personal tone, diction, and style preferences.
+Writes Like Me is an innovative solution designed to revolutionize content creation. This cutting-edge tool allows users to upload samples of their own writing, enabling the AI to learn and adapt to their unique style and voice. Once trained, VoiceMatch AI generates new content that mirrors the user's personal tone, diction, and style preferences.
 
 ## Key Features
 
